@@ -74,14 +74,6 @@ void quadfunc_xscope(int a, int b, int c, int xmin, int xmax) {
     printf("최댓값 : %d 최솟값 : %d\n", rmax, rmin);
 }
 
-int abs(int a) {
-    if(a<0) {
-        return -a;
-    } else {
-        return a;
-    }
-}
-
 void factorization(int a, int b, int c) {
     if(b*b - 4*a*c<0) {
         printf("%g+%gi\n%g%gi\n", -(double)b/2, sqrt(abs(b*b-4*a*c))/2, -(double)b/2,  -sqrt(abs(b*b-4*a*c))/2);
@@ -91,39 +83,40 @@ void factorization(int a, int b, int c) {
 }
 
 char * df(int a) {
-    char *res = malloc(sizeof(char)*100);
+    char *res = malloc(sizeof(char)*100); // 최종 문자열
     strcpy(res, "");
-    for(int i = a+1; i>0; i--) {
-        if(i==1) break;
+    
+    for(int i = a; i>0; i--) {
         int n;
-        scanf("%d", &n);
-        char k[100];
+        scanf("%d", &n); // 계수 입력
+        
+        char r[100]; // 문자열을 임시저장할 변수
         char x[100];
-        sprintf(k, "%d", n*(i-1));
-        strcat(res, n*(i-1) < 0 ? "" : "+");
-        strcat(res, k);
-        if(i==3) {
+        
+        sprintf(r, "%d", n*i); // n*계수를 문자열로 r에 저장
+        strcat(res, n*(i) < 0 ? "" : "+"); // 부호 붙이기
+        strcat(res, r); // 문자열 합치기
+        
+        if(i==2) { // 만약 x^1 일 경우
             strcat(res, "x");
         }
-        else if(i!=2) {
+        else if(i!=1) {
             strcat(res, "x^");
-            sprintf(x, "%d", i-2);
+            sprintf(x, "%d", i-1); // 미분된 계수를 추가
             strcat(res, x);
         }
     }
-    return res+1;
+    return res[0] == '+' ? res+1 : res; // 맨 처음 부호를 없애기 위해
 }
 int derivative(int a, int x) {
-    int num = 0;
-    for(int i = a+1; i>0; i--) {
-        if(i==1) break;
+    int num = 0; // 순간변화율
+    for(int i = a; i>0; i--) { // 최고차항의 차수만큼 반복
         int n;
-        scanf("%d", &n);
-        int j = i-1;
-        int tn = j*n;
-        j--;
-        while(j--) {
-            tn*=x;
+        scanf("%d", &n); // 계수 입력받기
+        
+        int tn = i*n; // 차수 * 계수
+        for(int j = i-1; j>0; j--) {
+            tn*=x; // x의 제곱만큼 곱하기
         }
         num+=tn;
     }
@@ -131,27 +124,50 @@ int derivative(int a, int x) {
 }
 
 double integral(int a, int x1, int x2) {
-    double j = a+2;
-    double val1 = 0;
-    double val2 = 0;
+    double j = a+2,val1,val2,tn1,tn2;
+
+    val1=val2=0;
     while(j--) {
         if(j==0) break;
         double n;
         scanf("%lf", &n);
-        double k = j;
-        double tn1 = n/j;
-        double tn2 = n/j;
-        while(k--) {
+        tn1 = tn2 = n/j;
+        for(int i=j;i>0;i--){
             tn1*=x1;
             tn2*=x2;
         }
         val1+=tn1;
         val2+=tn2;
     }
-    return val1 > val2 ? val1 - val2 : val2 - val1;
+    return fabs(val1 - val2);
 }
-int main() {
-    int a;
-    scanf("%d", &a);
-    printf("%s", df(a));
+
+double* Riemann(int a /* 최고차항의 차수 */, int x1, int x2 /* 폐구간 정의 */) {
+    double xh = fabs((double)x1 - (double)x2)/1000000; // 폐구간 사이를 1000000개로 나눔
+    double *sum = malloc(sizeof(double)*2); // 리만 오른쪽 합과 왼쪽 합의 배열
+    int coef[a+1]; // 계수를 저장할 배열
+    for(int i = a+1; i>0; i--) {
+        scanf("%d", &coef[i-1]); // 계수 입력
+    }
+    for(int i = 0; i<1000000; i++) { // 1000000개로 나눈 구간 각각의 넓이를 구해서 sum에 저장
+        for(int j = a+1; j>0; j--) { // 항의 갯수 만큼 반복
+            double tmp1 = 0, tmp2 = 0;
+            tmp1 += coef[j-1]; tmp2 += coef[j-1];
+            for(int k = j-1; k>0; k--) { // x의 차수를 곱하기
+                tmp1 *= ((x1 < x2 ? x1 : x2)+(xh*(i+1))); // 오른쪽 y
+                tmp2 *= ((x1 < x2 ? x1 : x2)+(xh*(i))); // 왼쪽 y
+            }
+            sum[0] += tmp1*xh; // 오른쪽 넓이
+            sum[1] += tmp2*xh; // 왼쪽 넓이
+        }
+    }
+    return sum;
 }
+
+int main(void) {
+    int a, x1, x2;
+    scanf("%d %d %d", &a, &x1, &x2);
+    double *res = Riemann(a, x1, x2);
+    printf("%g\n%g\n", res[0], res[1]);
+}
+
