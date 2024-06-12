@@ -1,10 +1,57 @@
 // 수학적 계산
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cmath>
+#include <cstring>
+#include <cstdlib>
 
 // 사칙연산
+int add(int a, int b);
+int subtract(int a, int b);
+int multiply(int a, int b);
+int quotient(int a, int b);
+int remain(int a, int b);
+
+// 제곱
+int power(int a, int b);
+
+// 2차함수
+void quadfunc(int a, int b, int c); // 최댓값 최솟값
+void quadfunc_xscope(int a, int b, int c, int xmin, int xmax); // x의 영역이 정해져있을 때 최댓값, 최솟값
+
+// 2차식 인수분해
+void factorization(int a, int b, int c);
+
+// 미적분
+char * df(int a); // 도함수
+int derivative(int a, int x); // 순간 변화율
+double integral(int a, int x1, int x2); // 적분1
+double* Riemann(int a, int x1, int x2); // 적분2
+
+// 단위변환
+void palseUnit(char a, double *var);
+
+// 전기전차기초
+double electricForce(double q1, char u1, double q2, char u2, double r, char u3); // 두 전하 사이의 전기량 구하기
+
+int main(void) {
+    double q1, q2, r;
+    char u1, u2, u3;
+    scanf("%lf %c %lf %c %lf %c", &q1, &u1, &q2, &u2, &r, &u3);
+    printf("%lf\n", electricForce(q1, u1, q2, u2, r, u3));
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+}
+
+
+
 int add(int a, int b) {
     return a + b;
 }
@@ -83,7 +130,7 @@ void factorization(int a, int b, int c) {
 }
 
 char * df(int a) {
-    char *res = malloc(sizeof(char)*100); // 최종 문자열
+    char *res = (char*)malloc(sizeof(char)*100); // 최종 문자열
     strcpy(res, "");
     
     for(int i = a; i>0; i--) {
@@ -108,6 +155,7 @@ char * df(int a) {
     }
     return res[0] == '+' ? res+1 : res; // 맨 처음 부호를 없애기 위해
 }
+
 int derivative(int a, int x) {
     int num = 0; // 순간변화율
     for(int i = a; i>0; i--) { // 최고차항의 차수만큼 반복
@@ -144,7 +192,7 @@ double integral(int a, int x1, int x2) {
 
 double* Riemann(int a /* 최고차항의 차수 */, int x1, int x2 /* 폐구간 정의 */) {
     double xh = fabs((double)x1 - (double)x2)/1000000; // 폐구간 사이를 1000000개로 나눔
-    double *sum = malloc(sizeof(double)*2); // 리만 오른쪽 합과 왼쪽 합의 배열
+    double *sum = (double*)malloc(sizeof(double)*2); // 리만 오른쪽 합과 왼쪽 합의 배열
     int coef[a+1]; // 계수를 저장할 배열
     for(int i = a+1; i>0; i--) {
         scanf("%d", &coef[i-1]); // 계수 입력
@@ -164,10 +212,44 @@ double* Riemann(int a /* 최고차항의 차수 */, int x1, int x2 /* 폐구간 
     return sum;
 }
 
-int main(void) {
-    int a, x1, x2;
-    scanf("%d %d %d", &a, &x1, &x2);
-    double *res = Riemann(a, x1, x2);
-    printf("%g\n%g\n", res[0], res[1]);
+void palseUnit(char a, double *var) {
+    switch (a) {
+        case 'c':
+            *var /= 100;
+            break;
+        case 'm':
+            *var /= 1000;
+            break;
+        case 'u':
+            *var /= 1000000;
+            break;
+        case 'n':
+            *var /= 1000000000;
+            break;
+        case 'p':
+            *var /= 1000000000000;
+            break;
+        case 'k':
+            *var *= 1000;
+            break;
+        case 'M':
+            *var *= 1000000;
+            break;
+        case 'G':
+            *var *= 1000000000;
+            break;
+        case 'T':
+            *var *= 1000000000000;
+            break;
+        default:
+            break;
+    }
+}
+
+double electricForce(double q1, char u1, double q2, char u2, double r, char u3) {
+    palseUnit(u1, &q1);
+    palseUnit(u2, &q2);
+    palseUnit(u3, &r);
+    return abs(9*pow(10, 9)*((q1*q2)/(r*r)));
 }
 
