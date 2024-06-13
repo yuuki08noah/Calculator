@@ -32,22 +32,13 @@ void palseUnit(char a, double *var);
 
 // 전기전차기초
 double electricForce(double q1, char u1, double q2, char u2, double r, char u3); // 두 전하 사이의 전기량 구하기
+double capacity(double A, char u1 ,double d, char u2, double e, char u3); // 정전 용량
 
 int main(void) {
     double q1, q2, r;
     char u1, u2, u3;
     scanf("%lf %c %lf %c %lf %c", &q1, &u1, &q2, &u2, &r, &u3);
-    printf("%lf\n", electricForce(q1, u1, q2, u2, r, u3));
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    printf("%.20lf\n", capacity(q1, u1, q2, u2, r, u3));
 }
 
 
@@ -253,3 +244,11 @@ double electricForce(double q1, char u1, double q2, char u2, double r, char u3) 
     return abs(9*pow(10, 9)*((q1*q2)/(r*r)));
 }
 
+double capacity(double A /* 면적 */, char u1, double d /* 간격 */, char u2, double e /* 유전율 */, char u3) {
+    palseUnit(u1, &A);
+    palseUnit(u1, &A);
+    palseUnit(u2, &d);
+    palseUnit(u3, &e);
+    double res = A/d*e*8.855*pow(10, -12);
+    return res;
+}// 정전 용량
