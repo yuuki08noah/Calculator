@@ -3,6 +3,9 @@
 #include <cmath>
 #include <cstring>
 #include <cstdlib>
+#include <iostream>
+
+using namespace std;
 
 // 사칙연산
 int add(int a, int b);
@@ -35,13 +38,10 @@ double electricForce(double q1, char u1, double q2, char u2, double r, char u3);
 double capacity(double A, char u1 ,double d, char u2, double e, char u3); // 정전 용량
 
 int main(void) {
-    double q1, q2, r;
-    char u1, u2, u3;
-    scanf("%lf %c %lf %c %lf %c", &q1, &u1, &q2, &u2, &r, &u3);
-    printf("%.20lf\n", capacity(q1, u1, q2, u2, r, u3));
+    int a, b, c;
+    cin >> a >> b >> c;
+    factorization(a, b, c);
 }
-
-
 
 int add(int a, int b) {
     return a + b;
@@ -114,9 +114,14 @@ void quadfunc_xscope(int a, int b, int c, int xmin, int xmax) {
 
 void factorization(int a, int b, int c) {
     if(b*b - 4*a*c<0) {
-        printf("%g+%gi\n%g%gi\n", -(double)b/2, sqrt(abs(b*b-4*a*c))/2, -(double)b/2,  -sqrt(abs(b*b-4*a*c))/2);
+        printf("%.2f+%.2fi\n%.2f%.2fi\n", -(double)b/(2*a), sqrt(abs(b*b-4*a*c))/(2*a) > 0 ? sqrt(abs(b*b-4*a*c))/(2*a) : -sqrt(abs(b*b-4*a*c))/(2*a), -(double)b/(2*a),  sqrt(abs(b*b-4*a*c))/(2*a) < 0 ? sqrt(abs(b*b-4*a*c))/(2*a) : -sqrt(abs(b*b-4*a*c))/(2*a));
     } else {
-        printf("%g\n%g\n", (-b + sqrt(b*b-4*a*c))/2, (-b - sqrt(b*b-4*a*c))/2);
+        if ((-b + sqrt(b*b-4*a*c))/(2*a) == (-b - sqrt(b*b-4*a*c))/(2*a)) {
+            printf("%.2f\n", (-b + sqrt(b*b-4*a*c))/(2*a));
+        }
+        else {
+            printf("%.2f\n%.2f\n", (-b + sqrt(b*b-4*a*c))/(2*a), (-b - sqrt(b*b-4*a*c))/(2*a));
+        }
     }
 }
 
